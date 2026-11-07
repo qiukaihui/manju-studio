@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>漫剧工坊 · Studio</title>
+<link rel="stylesheet" href="/ui/style.css" />
+</head>
+<body>
+<div class="grain"></div>
+
+<aside class="rail">
+  <a class="brand" href="#projects" id="brand-home">
+    <div class="brand-mark">漫</div>
+    <div class="brand-text">
+      <strong>漫剧工坊</strong>
+      <span>Novel → Screen Studio</span>
+    </div>
+  </a>
+
+  <div class="rail-block" id="project-switch-block" hidden>
+    <label class="rail-label">当前项目</label>
+    <select id="project-select" class="select"></select>
+    <a class="rail-link" href="#projects" id="back-projects">← 全部项目</a>
+  </div>
+
+  <nav class="nav" id="nav">
+    <div class="nav-sec" id="nav-sec-project" hidden>项目内</div>
+    <button class="nav-item" data-view="workspace"><i>01</i><span>分集</span></button>
+    <button class="nav-item" data-view="script"><i>02</i><span>剧本与设定</span></button>
+    <button class="nav-item" data-view="assets"><i>03</i><span>素材</span></button>
+    <button class="nav-item" data-view="produce"><i>04</i><span>生产</span></button>
+    <div class="nav-sec">系统</div>
+    <button class="nav-item" data-view="projects"><i>··</i><span>项目库</span></button>
+    <button class="nav-item" data-view="settings"><i>⚙</i><span>设置</span></button>
+  </nav>
+
+  <div class="rail-foot">
+    <div class="comfy" id="comfy">
+      <span class="dot" id="comfy-dot"></span>
+      <div>
+        <b id="comfy-name">ComfyUI</b>
+        <small id="comfy-meta">连接中…</small>
+      </div>
+    </div>
+    <div class="rail-note">本地渲染 · 零云端 API</div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="title-wrap">
+      <h1 id="proj-title">项目库</h1>
+      <p id="proj-sub" class="sub"></p>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="btn-validate">跑全部质量门</button>
+      <button class="btn btn-ghost" id="btn-report">打开报告</button>
+    </div>
+  </header>
+
+  <!-- 01 项目库 -->
+  <section class="view" id="view-projects">
+    <div class="projects-head">
+      <p class="ph-sub">每部剧一个独立工作区：剧本、分集、素材、成片互不串</p>
+      <button class="btn btn-accent" id="btn-new-project">＋ 新建项目</button>
+    </div>
+    <div class="project-grid" id="project-grid"></div>
+  </section>
+
+  <!-- 02 项目工作台：概览 + 分集 -->
+  <section class="view" id="view-workspace">
+    <div class="ws-block">
+      <div class="hero">
+        <div class="hero-media">
+          <video id="hero-video" controls playsinline preload="metadata"></video>
+          <div class="hero-empty" id="hero-empty">还没有成片<br /><small>在「生产」页拼接或生成</small></div>
+          <div class="hero-badge" id="hero-badge"></div>
+        </div>
+        <div class="hero-side">
+          <div class="kpis" id="kpis"></div>
+          <div class="pipeline" id="pipeline"></div>
+          <div class="hero-actions">
+            <button class="btn btn-accent" id="ws-produce">一键生成</button>
+            <button class="btn btn-ghost" id="ws-script">看剧本</button>
+          </div>
+        </div>
+      </div>
+      <div class="strip" id="strip"></div>
+    </div>
+    <div id="project-detail"></div>
+  </section>
+
+  <!-- 03 剧本与设定 -->
+  <section class="view" id="view-script">
+    <div class="tabs" id="script-tabs"></div>
+    <div class="pane" id="script-pane"><div class="loading">加载中…</div></div>
+  </section>
+
+  <!-- 04 素材：图片 + 视频 -->
+  <section class="view" id="view-assets">
+    <div class="view-head">
+      <div class="tabs" id="asset-tabs"></div>
+      <div class="view-tools">
+        <button class="btn btn-ghost" id="btn-asset-refresh">刷新</button>
+      </div>
+    </div>
+    <div class="grid" id="asset-grid"></div>
+  </section>
+
+  <!-- 05 生产 -->
+  <section class="view" id="view-produce">
+    <div class="produce">
+      <aside class="produce-form">
+        <div class="pf-head"><b>生产</b><span>在当前项目上跑，不需要再提交剧本</span></div>
+        <div id="pf-project-summary" class="pf-summary"></div>
+
+        <div id="pf-create-fields" hidden>
+        <label class="field"><span>剧名</span><input id="pf-name" class="input" placeholder="如：小道童误闯妖市" /></label>
+        <label class="field"><span>小说来源</span>
+          <select id="pf-novel-file" class="select"><option value="">— 选择 Downloads 里的 txt/md —</option></select>
+        </label>
+        <label class="field"><span>或粘贴正文</span>
+          <textarea id="pf-novel-text" class="textarea" rows="5" placeholder="与上面的文件二选一；已有项目可留空"></textarea>
+        </label>
+        <div class="pf-row">
+          <label class="field"><span>集数</span><input id="pf-episodes" class="input" type="number" value="1" min="1" max="120" /></label>
+          <label class="field"><span>单集秒数</span><input id="pf-seconds" class="input" type="number" value="120" min="30" step="10" /></label>
+        </div>
+        <div class="pf-row">
+          <label class="field"><span>题材</span><input id="pf-genre" class="input" value="国风奇幻" /></label>
+          <label class="field"><span>画风</span><input id="pf-style" class="input" value="国风动画·赛璐璐（漫剧向）" /></label>
+        </div>
+        </div>
+        <div class="pf-check">
+          <span>生成范围</span>
+          <label><input type="checkbox" id="pf-opt-plot" checked /> 理情节</label>
+          <label><input type="checkbox" id="pf-opt-images" checked /> 出图</label>
+          <label><input type="checkbox" id="pf-opt-videos" checked /> 出视频</label>
+          <label><input type="checkbox" id="pf-opt-upscale" disabled title="请在自己的 ComfyUI 工作流内处理超分" /> 超分</label>
+          <label><input type="checkbox" id="pf-opt-concat" checked /> 拼接</label>
+          <label><input type="checkbox" id="pf-opt-report" checked /> 总报告</label>
+          <label title="已有大纲/剧本等会被覆盖"><input type="checkbox" id="pf-opt-forcepre" /> 重跑前期</label>
+        </div>
+        <div class="pf-actions">
+          <button class="btn btn-accent" id="pf-start">开始生成</button>
+          <button class="btn btn-ghost" id="pf-stop" disabled>停止</button>
+        </div>
+        <div class="sec-title" style="margin:18px 0 8px"><h2 style="font-size:13px">手动补产</h2><span>TASKS</span></div>
+        <div id="task-list"></div>
+        <p class="hint" id="pf-hint">全流程约 2–4 小时（视频段是大头）。已有项目可只勾需要的部分。</p>
+      </aside>
+
+      <div class="produce-live">
+        <div class="corrupt-banner" id="corrupt-banner"></div>
+        <div class="resume-bar" id="resume-bar" style="display:none"><button class="btn btn-ghost" id="btn-resume">续跑上次生产</button><span style="font-size:11px;color:var(--muted-2)">检测到未跑完的生产记录</span></div>
+                <div class="scope-row" id="scope-row">
+          <label>范围</label>
+          <select id="pf-scope">
+            <option value="">全部集</option>
+          </select>
+          <span class="scope-hint">按集跑完一集更快：一集约 2 小时（9 段视频），10 集要 20 小时</span>
+        </div>
+<div class="timeline" id="pf-timeline"><div class="tl-empty">还没有开始<br /><small>左侧选好项目/范围，点「开始生成」</small></div></div>
+        <div class="live-grid live-single">
+          <div class="live-pane">
+            <div class="pane-h"><span>执行日志</span><em id="log-state">—</em></div>
+            <pre class="console" id="pf-log">等待任务…</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="view" id="view-settings">
+    <div class="view-head">
+      <div>
+        <h2 style="font:500 20px/1.3 var(--serif);letter-spacing:.05em;margin:0 0 4px">模型接口</h2>
+        <p style="margin:0;color:var(--muted);font-size:12.5px">生产流水线与右侧助手都走这里选中的接口；出图出片不走模型，走 ComfyUI。</p>
+      </div>
+      <div class="view-tools">
+        <button class="btn btn-ghost" id="btn-settings-reload">重新读取</button>
+        <button class="btn btn-accent" id="btn-settings-save">保存</button>
+      </div>
+    </div>
+    <div id="settings-panel" class="settings-panel"><div class="loading">加载中…</div></div>
+  </section>
+</main>
+
+<aside class="chat-rail" id="chat-rail">
+  <div class="chat-head">
+    <div class="chat-title">
+      <span class="chat-dot"></span>
+      <b>AI 助手</b>
+      <em id="chat-proj">未选择项目</em>
+    </div>
+    <div class="chat-head-actions">
+      <button class="chat-icon" id="chat-clear" title="清空对话">清</button>
+      <button class="chat-icon" id="chat-toggle" title="收起">⟩</button>
+    </div>
+  </div>
+  <div class="chat-tabs" id="chat-tabs">
+    <button class="chat-tab is-on" data-ctab="chat">对话</button>
+    <button class="chat-tab" data-ctab="produce">生产<span class="chat-badge" id="produce-badge" hidden></span></button>
+    <em id="ai-state" class="chat-tab-state">空闲</em>
+  </div>
+  <div class="chat-pane is-on" id="chat-pane-chat">
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="chat-hint">选一部剧后，可以直接让我改情节、改剧本、改资产；我会读文件、跑校验，改完告诉你结果。</div>
+    </div>
+  </div>
+  <div class="chat-pane" id="chat-pane-produce">
+    <div class="chat-msgs produce-stream" id="ai-chat"></div>
+  </div>
+  <div class="chat-composer">
+    <textarea id="chat-input" rows="2" placeholder="跟助手说：把第 2 集改成雨夜开场…"></textarea>
+    <div class="chat-actions">
+      <span class="chat-tip">⌘↵ 发送</span>
+      <button class="btn btn-ghost" id="chat-stop" disabled>停止</button>
+      <button class="btn btn-accent" id="chat-send">发送</button>
+    </div>
+  </div>
+</aside>
+<button class="chat-reopen" id="chat-reopen" title="展开助手">AI</button>
+
+
+
+<div class="lightbox" id="lightbox">
+  <img id="lightbox-img" alt="" />
+  <div class="lightbox-bar"><span id="lightbox-cap"></span><button class="btn btn-ghost" id="lightbox-close">关闭</button></div>
+</div>
+
+<div class="wizard" id="wizard">
+  <div class="wizard-box">
+    <div class="wizard-head">
+      <div><b>新建项目</b><span id="wz-step-label">第 1 步 / 2 · 基本信息</span></div>
+      <button class="btn btn-ghost" id="wz-close">关闭</button>
+    </div>
+    <div class="wizard-body">
+      <div class="wz-step is-on" data-wz="1">
+        <label class="field"><span>剧名</span><input id="wz-title" class="input" placeholder="如：小道童误闯妖市" /></label>
+
+        <div class="wz-modes" id="wz-modes">
+          <button class="wz-mode is-on" data-mode="file">导入剧本</button>
+          <button class="wz-mode" data-mode="text">粘贴正文</button>
+          <button class="wz-mode" data-mode="brief">只写梗概</button>
+        </div>
+
+        <div class="wz-pane is-on" data-pane="file">
+          <div class="dropzone" id="wz-drop">
+            <b>点击上传，或把 .txt / .md 拖到这里</b>
+            <span>也支持从 Downloads 快速选：</span>
+            <select id="wz-novel-file" class="select"><option value="">— 选择 Downloads 里的 txt/md —</option></select>
+            <input type="file" id="wz-file-input" accept=".txt,.md,text/plain" hidden />
+          </div>
+          <div class="wz-filerow" id="wz-file-row" hidden></div>
+        </div>
+
+        <div class="wz-pane" data-pane="text">
+          <label class="field"><span>正文</span><textarea id="wz-novel-text" class="textarea" rows="8" placeholder="把剧本或小说正文贴进来"></textarea></label>
+        </div>
+
+        <div class="wz-pane" data-pane="brief">
+          <label class="field"><span>故事梗概</span><textarea id="wz-brief" class="textarea" rows="8" placeholder="写清楚：主角是谁、想要什么、遇到什么阻碍、爽点在哪、每集结尾留什么钩子。系统会据此生成大纲与剧本。"></textarea></label>
+          <label class="wz-check"><input type="checkbox" id="wz-autopre" checked /> 创建后自动生成「情节 → 大纲 → 剧本」</label>
+        </div>
+
+        <div id="wz-detect" class="detect"></div>
+
+        <div class="pf-row">
+          <label class="field"><span>集数</span><input id="wz-episodes" class="input" type="number" value="1" min="1" max="120" /></label>
+          <label class="field"><span>单集秒数</span><input id="wz-seconds" class="input" type="number" value="120" min="30" step="10" /></label>
+        </div>
+        <div class="pf-row">
+          <label class="field"><span>画幅</span>
+            <select id="wz-aspect" class="select">
+              <option value="9:16">竖屏 9:16（抖音/快手/视频号）</option>
+              <option value="16:9">横屏 16:9（B站/YouTube）</option>
+            </select>
+          </label>
+          <label class="field"><span>分辨率</span>
+            <select id="wz-resolution" class="select">
+              <option value="720p">720p（快，推荐先用）</option>
+              <option value="1080p">1080p（慢，成片级）</option>
+            </select>
+          </label>
+        </div>
+        <p class="hint">导入的剧本若已写「第1集 / 第2集 / EP01」，会自动分集并按集存档；只写梗概时按你填的集数生成。</p>
+      </div>
+      <div class="wz-step" data-wz="2">
+        <div class="wz-cols">
+          <div>
+            <div class="sec-title"><h2>题材</h2><span id="wz-genre-pick">未选</span></div>
+            <div class="preset-grid preset-grid-genre" id="wz-genres"></div>
+          </div>
+          <div>
+            <div class="sec-title"><h2>画风</h2><span id="wz-style-pick">未选</span></div>
+            <div class="preset-grid preset-grid-style" id="wz-styles"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-foot">
+      <button class="btn btn-ghost" id="wz-prev">上一步</button>
+      <button class="btn btn-accent" id="wz-next">下一步</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/ui/app.js"></script>
+
+</body>
+</html>

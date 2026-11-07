@@ -1,0 +1,16 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+/data/
+/projects/
+/artifacts/
+studio/state/
+studio/logs/
+studio/dist/
+studio/desktop/runtime/
+studio/desktop/release/
+studio/desktop/.cache/
+*.log
+.gates.jsonl

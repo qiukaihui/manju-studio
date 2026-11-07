@@ -1,0 +1,43 @@
+{
+  "name": "manju-studio-desktop",
+  "version": "0.2.0",
+  "description": "漫剧工坊开源桌面版",
+  "author": "Manju Studio",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "prepare-runtime": "node build-runtime.mjs",
+    "dist:win": "npm run prepare-runtime && electron-builder --win --dir --x64 && node zip-release.mjs"
+  },
+  "devDependencies": {
+    "electron": "^40.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.manju.studio.desktop",
+    "productName": "漫剧工坊",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "runtime",
+        "to": "runtime"
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "signAndEditExecutable": false
+    },
+    "artifactName": "ManjuStudio-${version}-Windows-${arch}.${ext}"
+  },
+  "license": "MIT"
+}

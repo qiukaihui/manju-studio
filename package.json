@@ -1,0 +1,17 @@
+{
+  "name": "manju-studio",
+  "version": "0.2.0",
+  "description": "本地 AI 漫剧制作工作台",
+  "license": "MIT",
+  "author": "qiukaihui",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node tools/start.mjs",
+    "test": "node tools/test.mjs",
+    "desktop:prepare": "node studio/desktop/build-runtime.mjs",
+    "desktop:start": "npm --prefix studio/desktop start",
+    "build:win": "npm --prefix studio/desktop run dist:win"
+  },
+  "repository": { "type": "git", "url": "https://github.com/qiukaihui/manju-studio.git" }
+}
